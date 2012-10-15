@@ -2,7 +2,7 @@ exports.setBGView = function(win, view, scrollView) {
 	var imgView = Ti.UI.createImageView({
 		width : 320,
 		height : 320,
-		image : "",
+		image : win.data.bgImgPath,
 		backgroundColor : "#345",
 		top : -80,
 		zIndex : 0
@@ -45,11 +45,15 @@ exports.setBGView = function(win, view, scrollView) {
 			allowEditing : true
 		});
 	}
-	var f = Ti.App.Properties.getString("filename");
+	
+	
+	//var f = Ti.App.Properties.getString("filename");
+	console.log("배경 이미지 경로는? ", win.data.bgImg);
+	var f = win.data.bgImg;
 	var bgImage = null;
-	if (f != null) {
+	if (f) {
 		Ti.API.info(f);
-		bgImage = Titanium.Filesystem.getFile(f);
+		bgImage = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory +f);
 		imgView.image = bgImage;
 
 	}
@@ -60,12 +64,15 @@ exports.setBGView = function(win, view, scrollView) {
 				imgView.image = image;
 
 				// create new file name and remove old
-				var filename = Titanium.Filesystem.applicationDataDirectory + "/" + new Date().getTime() + ".jpg";
-				Ti.App.Properties.setString("filename", filename);
+				var filename = "Garden_"+ win.data.gardenId +"_" + new Date().getTime() + ".jpg";
+				
+				Ti.App.fireEvent("SAVE_BG_IMAGE_FILE", {path:filename, gardenId: win.data.gardenId});
+				
+				//Ti.App.Properties.setString("filename", filename);
 				if (bgImage != null) {
 					bgImage.deleteFile();
 				}
-				bgImage = Titanium.Filesystem.getFile(filename);
+				bgImage = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory + filename);
 				bgImage.write(image);
 
 			},

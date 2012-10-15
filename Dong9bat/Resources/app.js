@@ -104,6 +104,16 @@ Ti.App.addEventListener("UPDATE_GARDEN_NAME", function(e) {
 });
 
 /**
+ * 텃밭 상세 배경 이미지 저장
+ */
+Ti.App.addEventListener("SAVE_BG_IMAGE_FILE", function(e) {
+	Ti.App.Properties.setBool("isUpdated", true);
+	db.updeateGardenImage(e.gardenId, e.path);
+	var _data = db.getAllGardens();
+});
+
+
+/**
  * 절기 달력 정보 로드
  */
 Ti.App.addEventListener("UPDATE_THIS_MONTH_INFO", function(e) {

@@ -35,7 +35,7 @@ tableView.addEventListener('click', function(e) {
 
 	
 	var detailWin = AppWindow({
-		url : "./DetailGardenWindow.js"
+		url : "./GardenDetailWindow.js"
 	}, data);
 	Ti.UI.currentTab.open(detailWin);
 });
