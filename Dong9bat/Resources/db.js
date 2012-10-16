@@ -122,7 +122,7 @@ exports.get24CalendarInfoByMonth = function() {
 	var dt = new Date();
 	var dateStr = (dt.getMonth() + 1 ) + ".";
 	var data = [];
-	var rows = db.execute("SELECT name, content, date FROM tb_24cal WHERE date LIKE '%" + dateStr + "%'");
+	var rows = db.execute('SELECT name, content, date FROM tb_24cal WHERE date LIKE ?',  "%"+dateStr+"%");
 	while (rows.isValidRow()) {
 		data.push({
 			name : rows.fieldByName('name'),
@@ -217,7 +217,7 @@ var getCurrentPlantPeriodString = function() {
 exports.getPlantPeriodStep = function(_cropId) {
 	var cpps = getCurrentPlantPeriodString();
 	var db = Ti.Database.open(SYS_DATABASE_NAME);
-	var row = db.execute('SELECT step FROM tb_plant_period WHERE cropId=' + _cropId + ' AND period LIKE "' + cpps + '"');
+	var row = db.execute('SELECT step FROM tb_plant_period WHERE cropId=? AND period LIKE ?', _cropId,  cpps);
 	if (row.isValidRow()) {
 		var step = row.field(0);
 		db.close();
@@ -232,7 +232,7 @@ exports.getPlantPeriodStep = function(_cropId) {
  */
 exports.getCropMissionByDay = function(_cropId, _day) {
 	var db = Ti.Database.open(SYS_DATABASE_NAME);
-	var row = db.execute('SELECT missionId FROM tb_mission_by_crop WHERE cropId=' + _cropId + ' AND day=' + _day);
+	var row = db.execute('SELECT missionId FROM tb_mission_by_crop WHERE cropId=? AND day=?', _cropId, _day);
 	console.log("검색중...", _cropId, _day, row);
 	var missionIds = [];
 	var missions = [];
@@ -243,7 +243,7 @@ exports.getCropMissionByDay = function(_cropId, _day) {
 	}
 
 	for (var i = 0; i < missionIds.length; ++i) {
-		row = db.execute('SELECT * FROM tb_missions WHERE missionId=' + missionIds[i]);
+		row = db.execute('SELECT * FROM tb_missions WHERE missionId=?', missionIds[i]);
 
 		if (row.isValidRow()) {
 			missions.push({
@@ -286,8 +286,8 @@ exports.getAllTodos = function() {
 
 exports.updateGardenOrdering = function(_gardenId, _from, _to) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	userdb.execute('UPDATE user_tb_gardens SET ordering=' + _from + ' WHERE ordering=' + _to);
-	userdb.execute('UPDATE user_tb_gardens SET ordering=' + _to + ' WHERE gardenId=' + _gardenId);
+	userdb.execute('UPDATE user_tb_gardens SET ordering=? WHERE ordering=?', _from, _to);
+	userdb.execute('UPDATE user_tb_gardens SET ordering=? WHERE gardenId=?', _to, _gardenId);
 	userdb.close();
 }
 
@@ -305,7 +305,7 @@ exports.deleteGarden = function(_gardenId) {
 
 exports.updeateGardenName = function(_gardenId, _name) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	userdb.execute('UPDATE user_tb_gardens SET name="' + _name + '" WHERE gardenId=' + _gardenId);
+	userdb.execute('UPDATE user_tb_gardens SET name=? WHERE gardenId=?', _name, _gardenId);
 	userdb.close();
 }
 
