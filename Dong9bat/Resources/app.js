@@ -109,7 +109,8 @@ Ti.App.addEventListener("UPDATE_GARDEN_NAME", function(e) {
 Ti.App.addEventListener("SAVE_BG_IMAGE_FILE", function(e) {
 	Ti.App.Properties.setBool("isUpdated", true);
 	db.updeateGardenImage(e.gardenId, e.path);
-	var _data = db.getAllGardens();
+	//Ti.App.fireEvent("UPDATE_GARDEN_LIST");
+	
 });
 
 

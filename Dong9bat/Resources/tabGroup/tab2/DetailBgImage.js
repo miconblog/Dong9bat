@@ -10,21 +10,37 @@ exports.setBGView = function(win, view, scrollView) {
 	win.add(imgView);
 	bAttachWin = true;
 
+	//var f = Ti.App.Properties.getString("filename");
+	console.log("배경 이미지 경로는? ", win.data.bgImg);
+	var f = win.data.bgImg;
+	var bgImage = null;
+	if (f) {
+		Ti.API.info(f);
+		bgImage = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory + f);
+		imgView.image = bgImage;
+	}
+
 	var openCamera = function() {
 		Titanium.Media.showCamera({
 			success : function(event) {
 				var cropRect = event.cropRect;
 				var image = event.media;
+				imgView.image = image;
 
-				Titanium.Media.saveToPhotoGallery(image);
+				// create new file name and remove old
+				var filename = "Garden_" + win.data.gardenId + "_" + new Date().getTime() + ".jpg";
 
-				Titanium.UI.createAlertDialog({
-					title : 'Photo Gallery',
-					message : 'Check your photo gallery'
-				}).show();
-			},
-			cancel : function() {
+				Ti.App.fireEvent("SAVE_BG_IMAGE_FILE", {
+					path : filename,
+					gardenId : win.data.gardenId
+				});
 
+				//Ti.App.Properties.setString("filename", filename);
+				if (bgImage != null) {
+					bgImage.deleteFile();
+				}
+				bgImage = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory + filename);
+				bgImage.write(image);
 			},
 			error : function(error) {
 				// create alert
@@ -45,18 +61,6 @@ exports.setBGView = function(win, view, scrollView) {
 			allowEditing : true
 		});
 	}
-	
-	
-	//var f = Ti.App.Properties.getString("filename");
-	console.log("배경 이미지 경로는? ", win.data.bgImg);
-	var f = win.data.bgImg;
-	var bgImage = null;
-	if (f) {
-		Ti.API.info(f);
-		bgImage = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory +f);
-		imgView.image = bgImage;
-
-	}
 	var openPhotoAlbum = function() {
 		Titanium.Media.openPhotoGallery({
 			success : function(event) {
@@ -64,10 +68,13 @@ exports.setBGView = function(win, view, scrollView) {
 				imgView.image = image;
 
 				// create new file name and remove old
-				var filename = "Garden_"+ win.data.gardenId +"_" + new Date().getTime() + ".jpg";
-				
-				Ti.App.fireEvent("SAVE_BG_IMAGE_FILE", {path:filename, gardenId: win.data.gardenId});
-				
+				var filename = "Garden_" + win.data.gardenId + "_" + new Date().getTime() + ".jpg";
+
+				Ti.App.fireEvent("SAVE_BG_IMAGE_FILE", {
+					path : filename,
+					gardenId : win.data.gardenId
+				});
+
 				//Ti.App.Properties.setString("filename", filename);
 				if (bgImage != null) {
 					bgImage.deleteFile();
@@ -75,11 +82,6 @@ exports.setBGView = function(win, view, scrollView) {
 				bgImage = Titanium.Filesystem.getFile(Titanium.Filesystem.applicationDataDirectory + filename);
 				bgImage.write(image);
 
-			},
-			cancel : function() {
-
-			},
-			error : function(error) {
 			},
 			allowEditing : true
 		});
@@ -97,15 +99,15 @@ exports.setBGView = function(win, view, scrollView) {
 				top : -80 - (e.y / 2),
 				duration : 10
 			});
-			
-			if(!bAttachWin){
+
+			if (!bAttachWin) {
 				view.remove(imgView);
 				win.add(imgView);
-				bAttachWin = true;	
+				bAttachWin = true;
 			}
-			
-		}else{
-			if( bAttachWin ){
+
+		} else {
+			if (bAttachWin) {
 				bAttachWin = false;
 				win.remove(imgView);
 				view.add(imgView);

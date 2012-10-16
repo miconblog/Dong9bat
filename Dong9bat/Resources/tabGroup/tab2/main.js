@@ -96,11 +96,6 @@ done.addEventListener('click', function(e) {
 });
 win.setRightNavButton(edit);
 
-// 한번만 발생한다.
-win.addEventListener("open", function(e) {
-	Ti.App.fireEvent("UPDATE_GARDEN_LIST");
-});
-
 var MissionPrograss = require('/ui/MissionProgress');
 
 /**
@@ -347,5 +342,20 @@ tableView.addEventListener('scrollEnd',function(e)
 		tableView.setContentInsets({top:60},{animated:true});
 		arrow.transform=Ti.UI.create2DMatrix();
 		beginReloading();
+	}
+});
+
+
+// 한번만 발생한다.
+win.addEventListener("open", function(e) {
+	Ti.App.fireEvent("UPDATE_GARDEN_LIST");
+});
+
+win.addEventListener("focus", function(e) {
+	
+	// 새로 업데이트 된 목록이 있으면 업데이트 한다.
+	if (Ti.App.Properties.getBool("isUpdated")) {
+		Ti.App.Properties.setBool("isUpdated", false);
+		Ti.App.fireEvent("UPDATE_GARDEN_LIST");
 	}
 });

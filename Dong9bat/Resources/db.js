@@ -3,7 +3,7 @@ var USER_DATABASE_NAME = 'DONGUBUT_USER';
 
 exports.createDb = function() {
 	Ti.Database.install('dongu.db', SYS_DATABASE_NAME);
-	Ti.Database.install('dongu_user.sqlite', USER_DATABASE_NAME);
+	Ti.Database.install('dongu_user.db', USER_DATABASE_NAME);
 };
 
 exports.updateDb = function(e) {
