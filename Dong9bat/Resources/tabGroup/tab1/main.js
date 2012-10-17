@@ -31,7 +31,6 @@ dashboard.addEventListener('click', function(e) {
 	var winCrop = AppWindow({
 		title : e.item.name,
 		url : "/tabGroup/tab1/CropSelectWindow.js",
-		backgroundColor : '#FFF',
 		backgroundImage : '/images/crops/detail/page_back.png',
 	}, {
 		cropId : e.item.id

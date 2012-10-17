@@ -54,17 +54,17 @@ exports.getCropInfo = function(_cropId) {
 	var data = {};
 	if (row.isValidRow()) {
 		data = {
-			cropId : row.fieldByName('cropId'),
-			name : row.fieldByName('name'),
-			icon : row.fieldByName('icon'),
-			img : row.fieldByName('img'),
-			period : row.fieldByName('period'),
+			cropId 	: row.fieldByName('cropId'),
+			name 	: row.fieldByName('name'),
+			icon 	: row.fieldByName('icon'),
+			img 	: row.fieldByName('img'),
+			period 	: row.fieldByName('period'),
 			difficulty : row.fieldByName('difficulty'),
-			intro : row.fieldByName('intro'),
-			howto : row.fieldByName('howto'),
-			seed : row.fieldByName('seed'),
-			health : row.fieldByName('health'),
-			wiki : row.fieldByName('wiki')
+			intro 	: row.fieldByName('intro'),
+			howto 	: row.fieldByName('howto'),
+			seed 	: row.fieldByName('seed'),
+			health 	: row.fieldByName('health'),
+			wiki 	: row.fieldByName('wiki')
 		}
 	}
 	db.close();
@@ -81,10 +81,10 @@ exports.getThisMonthInfo = function() {
 	var row = db.execute('SELECT proverb, work, food FROM tb_12cal WHERE month = ?', month);
 	if (row.isValidRow()) {
 		data = {
-			month : month,
+			month 	: month,
 			proverb : row.fieldByName('proverb'),
-			work : row.fieldByName('work'),
-			food : row.fieldByName('food'),
+			work 	: row.fieldByName('work'),
+			food 	: row.fieldByName('food'),
 		}
 	}
 	db.close();
@@ -104,9 +104,9 @@ exports.get24CalendarInfo = function() {
 	var row = db.execute('SELECT name, content, date FROM tb_24cal WHERE date = ?', dateStr);
 	if (row.isValidRow()) {
 		data = {
-			name : row.fieldByName('name'),
+			name 	: row.fieldByName('name'),
 			content : row.fieldByName('content'),
-			date : row.fieldByName('date')
+			date 	: row.fieldByName('date')
 		}
 	}
 	db.close();
@@ -165,33 +165,43 @@ exports.addGarden = function(_gardenId, _cropId, _name, _period) {
 	userdb.close();
 };
 
-exports.addMissionToTodos = function(gardenId, data) {
-	console.log("사용자 할일에 추가: ", gardenId, data);
-
-	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', gardenId, data.title, data.content, data.expire, new Date().getTime());
-
-	userdb.close();
-};
-
 exports.getAllGardens = function() {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var retData = [];
 	var rows = userdb.execute('SELECT * FROM user_tb_gardens ORDER BY ordering ASC');
 	while (rows.isValidRow()) {
 		retData.push({
-			gardenId : rows.fieldByName('gardenId'),
-			cropId : rows.fieldByName('cropId'),
-			name : rows.fieldByName('name'),
-			ordering : rows.fieldByName('ordering'),
-			startDate : rows.fieldByName('startDate') - 0,
-			endDate : rows.fieldByName('endDate') - 0,
-			bgImg : rows.fieldByName('bgImg')
+			gardenId 	: rows.fieldByName('gardenId'),
+			cropId 		: rows.fieldByName('cropId'),
+			name 		: rows.fieldByName('name'),
+			ordering 	: rows.fieldByName('ordering'),
+			startDate	: rows.fieldByName('startDate') - 0,
+			endDate 	: rows.fieldByName('endDate') - 0,
+			bgImg 		: rows.fieldByName('bgImg')
 		});
 		rows.next();
 	}
 	userdb.close();
 	//Ti.API.info(retData);
+	return retData;
+};
+
+exports.getGardenHistory = function(gardenId){
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var retData = [];
+	var rows = userdb.execute('SELECT * FROM user_tb_garden_history ORDER BY no ASC');
+	while (rows.isValidRow()) {
+		retData.push({
+			no 			: rows.fieldByName('no'),
+			gardenId	: rows.fieldByName('gardenId'),
+			contentType : rows.fieldByName('contentType'),
+			title 		: rows.fieldByName('title'),
+			content 	: rows.fieldByName('content'),
+			pubDate 	: rows.fieldByName('pubDate')
+		});
+		rows.next();
+	}
+	userdb.close();
 	return retData;
 };
 
@@ -208,7 +218,8 @@ var getCurrentPlantPeriodString = function() {
 		str += "c";
 	}
 	return str + "%";
-}
+};
+
 /**
  * 오늘 날짜에 해당하는 식물 기간 단계를 반환한다.
  * @param {Number} _cropId
@@ -232,13 +243,15 @@ exports.getPlantPeriodStep = function(_cropId) {
  */
 exports.getCropMissionByDay = function(_cropId, _day) {
 	var db = Ti.Database.open(SYS_DATABASE_NAME);
-	var row = db.execute('SELECT missionId FROM tb_mission_by_crop WHERE cropId=? AND day=?', _cropId, _day);
+	var row = db.execute('SELECT missionId FROM tb_mission_by_crop WHERE cropId='+ _cropId +' AND day='+ _day);
 	console.log("검색중...", _cropId, _day, row);
 	var missionIds = [];
 	var missions = [];
 
 	while (row.isValidRow()) {
-		missionIds.push(row.field(0));
+		var missionId = row.fieldByName('missionId');
+		console.log("미션 아이디: ", missionId);
+		missionIds.push(missionId);
 		row.next();
 	}
 
@@ -247,10 +260,10 @@ exports.getCropMissionByDay = function(_cropId, _day) {
 
 		if (row.isValidRow()) {
 			missions.push({
-				missionId : row.fieldByName('missionId'),
-				title : row.fieldByName('title'),
-				content : row.fieldByName('content'),
-				expire : row.fieldByName('expire')	// 유효기간
+				missionId 	: row.fieldByName('missionId'),
+				title 		: row.fieldByName('title'),
+				content 	: row.fieldByName('content'),
+				expire 		: row.fieldByName('expire')	// 유효기간
 			});
 		}
 	}
@@ -259,6 +272,18 @@ exports.getCropMissionByDay = function(_cropId, _day) {
 	return missions;
 };
 
+
+/**
+ * 할일 추가
+ */
+exports.addTodo = function(gardenId, data) {
+	console.log("사용자 할일에 추가: ", gardenId, data);
+
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', gardenId, data.title, data.content, data.expire, new Date().getTime());
+
+	userdb.close();
+};
 /**
  * 할일을 모두 가져온다.
  */
@@ -269,14 +294,14 @@ exports.getAllTodos = function() {
 
 	while (row.isValidRow()) {
 		data.push({
-			todoId : row.fieldByName('no'),
-			gardenId : row.fieldByName('gardenId'),
-			title : row.fieldByName('title'),
-			content : row.fieldByName('content'),
-			expire : row.fieldByName('expire'),
-			complete : row.fieldByName('complete'),
-			important : row.fieldByName('important'),
-			startDate : row.fieldByName('startDate')
+			todoId 		: row.fieldByName('todoId'),
+			gardenId 	: row.fieldByName('gardenId'),
+			title 		: row.fieldByName('title'),
+			content 	: row.fieldByName('content'),
+			expire 		: row.fieldByName('expire'),
+			complete 	: row.fieldByName('complete'),
+			important 	: row.fieldByName('important'),
+			startDate 	: row.fieldByName('startDate')
 		});
 		row.next();
 	}
@@ -284,34 +309,38 @@ exports.getAllTodos = function() {
 	return data;
 };
 
+/**
+ * 할일 삭제
+ * @param {Object} todoId
+ */
+exports.deleteTodo = function(todoId) {
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var row = userdb.execute('DELETE FROM user_tb_todos WHERE todoId=?', todoId);
+	userdb.close();
+};
+
+
 exports.updateGardenOrdering = function(_gardenId, _from, _to) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	userdb.execute('UPDATE user_tb_gardens SET ordering=? WHERE ordering=?', _from, _to);
 	userdb.execute('UPDATE user_tb_gardens SET ordering=? WHERE gardenId=?', _to, _gardenId);
 	userdb.close();
-}
+};
 
 exports.deleteGarden = function(_gardenId) {
-	
-	console.log("텃밭 삭제 : ", _gardenId);
-	
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var row = userdb.execute('DELETE FROM user_tb_gardens WHERE gardenId=?', _gardenId);
-	
-	console.log("결과: ", row);
-	
 	userdb.close();
-}
+};
 
 exports.updeateGardenName = function(_gardenId, _name) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	userdb.execute('UPDATE user_tb_gardens SET name=? WHERE gardenId=?', _name, _gardenId);
 	userdb.close();
-}
+};
 
 exports.updeateGardenImage = function(_gardenId, _path) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	userdb.execute('update user_tb_gardens set bgImg=? where gardenId=?', _path, _gardenId);
+	userdb.execute('UPDATE user_tb_gardens SET bgImg=? WHERE gardenId=?', _path, _gardenId);
 	userdb.close();
-}
-
+};

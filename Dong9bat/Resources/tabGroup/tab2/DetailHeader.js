@@ -11,16 +11,6 @@ exports.set = function(win) {
 	});
 	win.leftNavButton = back;
 
-	// var close = Ti.UI.createButton({
-	// title : "텃밭",
-	// style : Ti.UI.iPhone.SystemButtonStyle.BAR
-	// });
-	// close.addEventListener("click", function(e) {
-	// Ti.App.fireEvent("SHOW_MAIN_TAB_MENU");
-	// win.close();
-	// });
-	// win.leftNavButton = close;
-
 	var done = Ti.UI.createButton({
 		title : "완료",
 		width : 60,

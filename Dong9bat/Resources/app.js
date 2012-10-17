@@ -175,7 +175,7 @@ Ti.App.addEventListener("ADD_MISSION_TO_TODOS", function(e){
 	
 	for(var i=0; i < data.length; ++i){
 		console.log("할일 검색", e.gardenId, data[i]);
-		db.addMissionToTodos(e.gardenId, data[i]);	
+		db.addTodo(e.gardenId, data[i]);	
 	}
 });
 
@@ -191,6 +191,12 @@ Ti.App.addEventListener("LOAD_TODOS", function(e){
 	}	
 });
 
+/**
+ * 할일 삭제
+ */
+Ti.App.addEventListener("DELETE_TODO", function(e) {
+	db.deleteTodo(e.todoId);
+});
 
 
 if (Ti.version < 1.8) {

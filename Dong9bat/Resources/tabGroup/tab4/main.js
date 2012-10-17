@@ -54,6 +54,13 @@ var tableView = Ti.UI.createTableView({
 tableView.addEventListener('click', function(e) {
 	alert('title: \'' + e.row.title + '\', section: \'' + e.section.headerTitle + '\', index: ' + e.index);
 });
+
+tableView.addEventListener('delete', function(e) {
+	Ti.App.fireEvent('DELETE_TODO', {
+		todoId : e.rowData.data.todoId
+	})
+});
+
 win.add(tableView);
 
 win.addEventListener("focus", function() {
@@ -73,8 +80,9 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 		var row = Ti.UI.createTableViewRow({
 			borderWidth : 2,
 			borderColor : '#000',
-			className : 'todo-row',
-			height : 80
+			className 	: 'todo-row',
+			height 		: 80,
+			data		: data[i]
 		});
 		
 		if(!bImportant && data[i].important > 0 ){
@@ -124,7 +132,7 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 		});
 		row.add(btnImportant);
 		
-		// 완 버튼 
+		// 완료 버튼 
 		var btnComplete = Ti.UI.createButton({
 			title: "완료",
 			right: 10

@@ -4,11 +4,7 @@ var back = Ti.UI.createButton({
 	width : 51,
 	height : 30,
 	backgroundImage : '/images/button_back.png',
-	backgroundSelectedImage : '/images/button_back_selected.png',
-	font : {
-		fontSize : 13,
-		fontWeight : 'bold'
-	}
+	backgroundSelectedImage : '/images/button_back_selected.png'
 });
 
 back.addEventListener('click', function() {
