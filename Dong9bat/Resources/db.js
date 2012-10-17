@@ -165,6 +165,9 @@ exports.addGarden = function(_gardenId, _cropId, _name, _period) {
 	userdb.close();
 };
 
+/**
+ * 모든 텃밭 목록을 가져온다.
+ */
 exports.getAllGardens = function() {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var retData = [];
@@ -186,6 +189,23 @@ exports.getAllGardens = function() {
 	return retData;
 };
 
+/**
+ * 텃밭 이름을 가져온다. 
+ */
+exports.getGardenNameById = function(gardenId){
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var row = userdb.execute('SELECT name FROM user_tb_gardens WHERE gardenId = ?', gardenId);
+	var retName = null;
+	if (row.isValidRow()) {
+		retName =  row.fieldByName('name');
+	}
+	userdb.close();
+	return retName;
+};
+
+/**
+ * 텃밭 상세 정보를 가져온다.
+ */
 exports.getGardenHistory = function(gardenId){
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var retData = [];
@@ -289,7 +309,7 @@ exports.addTodo = function(gardenId, data) {
  */
 exports.getAllTodos = function() {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	var row = userdb.execute('SELECT * FROM user_tb_todos ORDER BY important ASC');
+	var row = userdb.execute('SELECT * FROM user_tb_todos ORDER BY important DESC');
 	var data = [];
 
 	while (row.isValidRow()) {
@@ -319,6 +339,17 @@ exports.deleteTodo = function(todoId) {
 	userdb.close();
 };
 
+/**
+ * 할일 중요도 변경 
+ * @param {Number} todoId
+ * @param {Number} value
+ */
+exports.updateTodoImportant = function(todoId, value){
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	console.log("할일 저장: ", todoId, value);
+	var row = userdb.execute('UPDATE user_tb_todos SET important=? WHERE todoId=?', value, todoId);
+	userdb.close();
+};
 
 exports.updateGardenOrdering = function(_gardenId, _from, _to) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
