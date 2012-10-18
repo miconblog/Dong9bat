@@ -48,3 +48,24 @@ var getRemoteFile = function(filename, url, fn_end, fn_progress) {
 
 	}
 };
+
+var getLocalDate = function(time){
+	var dt = new Date(time);
+	
+	var Y  = dt.getFullYear();
+	var M  = dt.getMonth() + 1;
+	var D  = dt.getDate();
+	
+	return Y + "년 " + M + "월 " + D + "일";
+};
+
+
+getDateSplitSlash = function(time){
+	var dt = new Date(time);
+	
+	var Y  = dt.getFullYear();
+	var M  = dt.getMonth() + 1;
+	var D  = dt.getDate();
+	
+	return Y + "/" + M + "/" + D;
+}

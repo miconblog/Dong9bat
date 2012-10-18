@@ -298,9 +298,11 @@ exports.getCropMissionByDay = function(_cropId, _day) {
  */
 exports.addTodo = function(gardenId, data) {
 	console.log("사용자 할일에 추가: ", gardenId, data);
+	var thisTime= new Date().getTime();
+	var expireTime = data.expire * 1000 * 60* 24;
 
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', gardenId, data.title, data.content, data.expire, new Date().getTime());
+	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', gardenId, data.title, data.content, thisTime + expireTime, thisTime);
 
 	userdb.close();
 };
@@ -309,7 +311,7 @@ exports.addTodo = function(gardenId, data) {
  */
 exports.getAllTodos = function() {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	var row = userdb.execute('SELECT * FROM user_tb_todos ORDER BY important DESC');
+	var row = userdb.execute('SELECT * FROM user_tb_todos ORDER BY complete ASC, important DESC');
 	var data = [];
 
 	while (row.isValidRow()) {
@@ -318,10 +320,9 @@ exports.getAllTodos = function() {
 			gardenId 	: row.fieldByName('gardenId'),
 			title 		: row.fieldByName('title'),
 			content 	: row.fieldByName('content'),
-			expire 		: row.fieldByName('expire'),
+			expire 		: row.fieldByName('expire')-0,
 			complete 	: row.fieldByName('complete'),
-			important 	: row.fieldByName('important'),
-			startDate 	: row.fieldByName('startDate')
+			important 	: row.fieldByName('important')
 		});
 		row.next();
 	}
@@ -346,10 +347,22 @@ exports.deleteTodo = function(todoId) {
  */
 exports.updateTodoImportant = function(todoId, value){
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	console.log("할일 저장: ", todoId, value);
 	var row = userdb.execute('UPDATE user_tb_todos SET important=? WHERE todoId=?', value, todoId);
 	userdb.close();
 };
+
+/**
+ * 할일 완료여부 변경 
+ * @param {Number} todoId
+ * @param {Number} value
+ */
+exports.updateTodoComplete = function(todoId, value){
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var row = userdb.execute('UPDATE user_tb_todos SET complete=? WHERE todoId=?', value, todoId);
+	userdb.close();
+};
+
+
 
 exports.updateGardenOrdering = function(_gardenId, _from, _to) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);

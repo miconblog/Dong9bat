@@ -1,3 +1,4 @@
+Ti.include("/util/util.js");
 var win = Ti.UI.currentWindow;
 
 var add = Ti.UI.createButton({
@@ -48,19 +49,30 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 	
 	var bImportant = false;
 	var bNormal = false;
+	var bComplete = false;
 	
 	for (var i = 0; i < data.length; ++i) {
 
 		var row = Ti.UI.createTableViewRow({
 			className 	: 'todo-row',
 			height 		: 60,
+			hasChild 	: !!data[i].gardenName,
 			data		: data[i]
 		});
 		
-		var contentView = Ti.UI.createView({
+		var verticalView = Ti.UI.createView({
 			width	: 226,
 			left	: 52,
-			top		: 10,
+			layout	: "vertical"
+		});
+		
+		var contentView = Ti.UI.createView({
+			height	: 30,
+			layout	: "horizontal"
+		});
+		
+		var expireView = Ti.UI.createView({
+			height	: 30,
 			layout	: "horizontal"
 		});
 		
@@ -75,9 +87,17 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 			row.header = "해야할 일";
 		}
 		
+		if(!bComplete && data[i].complete > 0 ){
+			bImportant = true;
+			bNormal = true;
+			bComplete = true;
+			row.header = "완료";
+		}
+		
 		// 할일 제목
 		var lbTitle = Ti.UI.createLabel({
 			text : data[i].title,
+			top	 : 10,
 			font : {
 				fontFamily : "NanumGothic",
 				fontWeight : "bold"
@@ -87,14 +107,29 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 			width : Ti.UI.SIZE,
 		});
 		
-		var lbSubTitle = Ti.UI.createLabel({
-			text : "("+data[i].gardenName +")",
+		// 텃밭이름
+		var sName = data[i].gardenName || "텃밭 없음";
+		var lbGardenName = Ti.UI.createLabel({
+			top	 : 10,
+			text : "("+ sName +")",
 			font : {
 				fontFamily : "NanumGothic",
 				fontSize : 12
 			},
 			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			color : '#6d2c00',
+		});
+		
+		
+		// 미션 기간 
+		var lbExpire = Ti.UI.createLabel({
+			text: "미션기간: "+ getLocalDate(data[i].expire) +"까지",
+			font : {
+				fontFamily : "NanumGothic",
+				fontSize : 11
+			},
+			left: 0,
+			bottom: 10
 		});
 		
 		
@@ -111,82 +146,35 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 		// 완료 버튼 
 		var btnComplete = Ti.UI.createButton({
 			clickName	: "complete",
-			value 		: data[i].completed,
 			left		: 10,
 			width		: 32,
 			height		: 32,
-			backgroundImage: "/images/ui/CheckBox/checkbox_"+ (( data[i].completed )? "full":"empty") +".png"
+			backgroundImage: "/images/ui/CheckBox/checkbox_"+ (( data[i].complete )? "full":"empty") +".png"
 		});
 		
+		// 레이아웃 
 		contentView.add(lbTitle);
-		contentView.add(lbSubTitle);
+		contentView.add(lbGardenName);
+		expireView.add(lbExpire);
+		verticalView.add(contentView);
+		verticalView.add(expireView);
 		row.add(btnImportant);
-		row.add(contentView);
+		row.add(verticalView);
 		row.add(btnComplete);
 		
+		// 이벤트
 		row.addEventListener("click", function(e){	
 			switch(e.source.clickName){
 				case "important":
-					console.log("중요 버튼 클릭!", e.rowData.data );
 					Ti.App.fireEvent("UPDATE_TODO_IMPORTANT", {todoId: e.rowData.data.todoId, value: !e.rowData.data.important});
-				
-				break;
+					break;
+
 				case "complete":
-				break;
+					Ti.App.fireEvent("UPDATE_TODO_COMPLETE", {todoId: e.rowData.data.todoId, value: !e.rowData.data.complete});
+					break;
 			}
 			
 		});
-		
-
-		// if (data[i].header) {
-			// var section = Ti.UI.createTableViewSection({
-				// headerTitle : data[i].header + "!!",
-				// borderWidth : 2,
-				// borderColor : '#777'
-			// });
-// 
-			// // var header = Ti.UI.createView({
-			// // backgroundColor : '#999',
-			// // height : 'auto'
-			// // });
-			// //
-			// // var headerLabel = Ti.UI.createLabel({
-			// // font : {
-			// // fontFamily : 'Helvetica Neue',
-			// // fontSize : 18,
-			// // fontWeight : 'bold'
-			// // },
-			// // text : 'Custom Header - first label',
-			// // color : '#222',
-			// // textAlign : 'left',
-			// // top : 0,
-			// // left : 10,
-			// // width : 300,
-			// // height : 30
-			// // });
-			// // var headerLabel2 = Ti.UI.createLabel({
-			// // font : {
-			// // fontFamily : 'Helvetica Neue',
-			// // fontSize : 18,
-			// // fontWeight : 'bold'
-			// // },
-			// // text : 'Custom Header - second label',
-			// // color : '#222',
-			// // textAlign : 'left',
-			// // left : 10,
-			// // top : 50,
-			// // width : 300,
-			// // height : 30
-			// // });
-			// // header.add(headerLabel);
-			// // header.add(headerLabel2);
-			// //
-			// // section.headerView = header;
-			// section.add(row);
-			// sections.push(section);
-		// } else {
-			// sections[sections.length - 1].add(row);
-		// }
 		rows.push(row);
 	}
 

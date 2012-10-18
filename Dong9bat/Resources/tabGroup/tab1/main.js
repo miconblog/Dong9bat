@@ -9,17 +9,26 @@ var dashboard = Titanium.UI.createDashboardView({
 //view.add(dashboard);
 win.add(dashboard);
 
-var cancel = Titanium.UI.createButton({
+var done = Ti.UI.createButton({
 	title : "완료",
-	systembutton : Titanium.UI.iPhone.SystemButton.DONE
+	width : 60,
+	height : 30,
+	font : {
+		fontSize : '12',
+		fontWeight : 'Bold',
+		fontFamily : 'NanumGothic'
+	},
+	backgroundImage : '/images/button_edit.png',
+	backgroundSelectedImage : '/images/button_edit_selected.png'
 });
-cancel.addEventListener('click', function() {
+
+done.addEventListener('click', function() {
 	dashboard.stopEditing();
 	win.rightNavButton = null;
 });
 
 dashboard.addEventListener('edit', function() {
-	win.rightNavButton = cancel;
+	win.rightNavButton = done;
 });
 
 /**
@@ -58,9 +67,9 @@ Ti.App.addEventListener("DRAW_ALL_CROPS", function(e) {
 		}
 
 		if (!isUpdate) {
-			
+
 			console.log("새로 추가: ", crops[i].name);
-			
+
 			var item = Titanium.UI.createDashboardItem({
 				image : crops[i].icon,
 				canDelete : false,
@@ -72,10 +81,10 @@ Ti.App.addEventListener("DRAW_ALL_CROPS", function(e) {
 		}
 
 	}
-	if(data.length > 0){
-		dashboard.setData(data);	
+	if (data.length > 0) {
+		dashboard.setData(data);
 	}
-	
+
 	console.log("작물 로드 완료!! :  ", crops, items);
 });
 

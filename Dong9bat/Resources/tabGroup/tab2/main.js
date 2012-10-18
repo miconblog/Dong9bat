@@ -1,3 +1,4 @@
+Ti.include("/util/util.js");
 var win = Titanium.UI.currentWindow;
 
 var search = Ti.UI.createSearchBar({
@@ -25,7 +26,6 @@ var tableView = Ti.UI.createTableView({
 });
 
 var AppWindow = require('ui/AppWindow');
-var Util = require('util');
 tableView.addEventListener('click', function(e) {
 	win.hideTabBar();
 	Ti.App.fireEvent("HIDE_MAIN_TAB_MENU");
@@ -36,7 +36,7 @@ tableView.addEventListener('click', function(e) {
 	
 	var detailWin = AppWindow({
 		url : "./GardenDetailWindow.js",
-		backgroundImage: '/images/content_bg.png'
+		backgroundImage: '/images/crops/detail/page_back.png'
 	}, data);
 	Ti.UI.currentTab.open(detailWin);
 });
@@ -131,7 +131,6 @@ Ti.App.addEventListener("DRAW_GARDEN_LIST", function(e) {
 			borderWidth :2,
 			borderColor: "#D3C1B2"
 		});
-		//row.selectedBackgroundColor = '#fff';
 
 		var photo = Ti.UI.createView({
 			backgroundImage : '/images/garden/crop_back.png',
@@ -171,8 +170,8 @@ Ti.App.addEventListener("DRAW_GARDEN_LIST", function(e) {
 			endDate : data[i].endDate
 		});;
 
-		var strStartDate = Util.convertDate(data[i].startDate);
-		var strEndDate = Util.convertDate(data[i].endDate);
+		var strStartDate = getDateSplitSlash(data[i].startDate);
+		var strEndDate = getDateSplitSlash(data[i].endDate);
 		var date = Ti.UI.createLabel({
 			color : '#78542F',
 			font : {

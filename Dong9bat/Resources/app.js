@@ -207,7 +207,7 @@ Ti.App.addEventListener("DELETE_TODO", function(e) {
 
 
 /**
- * 할일의 중요도 올리기
+ * 할일의 중요도 변경
  * @param {Number} e.todoId
  * @param {Boolean} e.value 
  */
@@ -215,6 +215,18 @@ Ti.App.addEventListener("UPDATE_TODO_IMPORTANT", function(e){
 	db.updateTodoImportant(e.todoId, e.value ? 1:0);
 	Ti.App.fireEvent("LOAD_TODOS");
 });
+
+/**
+ * 할일의 완료 여부 변경
+ * @param {Number} e.todoId
+ * @param {Boolean} e.value 
+ */
+Ti.App.addEventListener("UPDATE_TODO_COMPLETE", function(e){
+	db.updateTodoComplete(e.todoId, e.value ? 1:0);
+	Ti.App.fireEvent("LOAD_TODOS");
+});
+
+
 
 if (Ti.version < 1.8) {
 	alert('Sorry - this application template requires Titanium Mobile SDK 1.8 or later');
