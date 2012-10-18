@@ -118,6 +118,9 @@ var MissionPrograss = require('/ui/MissionProgress');
  }
  */
 Ti.App.addEventListener("DRAW_GARDEN_LIST", function(e) {
+	
+	console.log("텃밭 목록!!", e.data);
+	
 	var data = e.data;
 	var rowData = [];
 

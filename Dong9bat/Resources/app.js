@@ -19,7 +19,7 @@ Ti.App.addEventListener("TAB_WINDOW_OPENED", function(e) {
  */
 Ti.App.addEventListener("ADD_CROP_TO_GARDEN", function(e) {
 	// DB 저장하고, 나중에 화면에 그릴때를 위해서 변경할 것을 체크해둔다.
-	var gardenId = new Date().getTime();
+	var gardenId = "g"+ new Date().getTime();
 	Ti.App.Properties.setBool("isUpdated", true);
 	
 	db.addGarden(gardenId, e.cropId, e.name, e.period);
@@ -60,10 +60,20 @@ Ti.App.addEventListener("UPDATE_GARDEN_LIST", function() {
 		_data[i].cropInfo = db.getCropInfo(_data[i].cropId);
 	}
 
+	console.log("텃밭 목록: ", _data);
 	Ti.App.fireEvent("DRAW_GARDEN_LIST", {
 		data : _data
 	});
 });
+
+Ti.App.addEventListener("LOAD_GARDEN_LIST", function(){
+	var _data = db.getAllGardens();
+
+	Ti.App.fireEvent("DRAW_GARDEN_LIST_FOR_SELECT", {
+		data : _data
+	});
+});
+
 
 /**
  * 텃밭 목록의 순서를 변경한다.
@@ -188,14 +198,28 @@ Ti.App.addEventListener("LOAD_TODOS", function(e){
 	
 	// 텃밭 아이디를 검색해서 이름을 가져와 붙인다. 
 	for(var i=0; i<data.length; i++){
-		var gardenId = data[i].gardenId;
-		data[i].gardenName = db.getGardenNameById(gardenId);
+		var gardenId = data[i].gardenId || 0;
+		data[i].gardenName = db.getGardenNameById(gardenId) || 0;
 	}
 	
 	if( data.length > 0 ){
 		console.log("할일 검색", data);
 		Ti.App.fireEvent("DRAW_TODOS", {data: data});
 	}	
+});
+
+/**
+ * 할일 추가
+ */
+Ti.App.addEventListener("ADD_USER_TODOS", function(e){
+	if( !!e.gardenId ) {
+		// 텃밭 히스토리에도 삽입
+		console.log("TODO: 텃밭 히스토리에도 삽입", e);
+	}
+	
+	// 사용자 할일 추가
+	db.addUserTodo(e);
+	
 });
 
 /**

@@ -2,7 +2,16 @@ Ti.include("/util/util.js");
 var win = Ti.UI.currentWindow;
 
 var add = Ti.UI.createButton({
-	systemButton : Titanium.UI.iPhone.SystemButton.ADD
+	title : "추가",
+	width : 60,
+	height : 30,
+	font : {
+		fontSize : '12',
+		fontWeight : 'Bold',
+		fontFamily : 'NanumGothic'
+	},
+	backgroundImage : '/images/button_edit.png',
+	backgroundSelectedImage : '/images/button_edit_selected.png'
 });
 add.addEventListener('click', function(e) {
 
@@ -20,14 +29,14 @@ win.rightNavButton = add;
 var tableView = Ti.UI.createTableView({
 	editable : true,
 	moveable : true,
+	minRowHeight: 60,
 	backgroundColor : "transparent",
 	backgroundImage : '/images/crops/detail/page_back.png',
 	separatorColor : '#999'
 });
 
-
 // tableView.addEventListener('click', function(e) {
-	// alert('title: \'' + e.row.title + '\', section: \'' + e.section.headerTitle + '\', index: ' + e.index);
+// alert('title: \'' + e.row.title + '\', section: \'' + e.section.headerTitle + '\', index: ' + e.index);
 // });
 
 tableView.addEventListener('delete', function(e) {
@@ -46,72 +55,78 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 	var data = e.data;
 	var rows = [];
 	var sections = [];
-	
+
 	var bImportant = false;
 	var bNormal = false;
 	var bComplete = false;
-	
+
 	for (var i = 0; i < data.length; ++i) {
 
 		var row = Ti.UI.createTableViewRow({
-			className 	: 'todo-row',
-			height 		: 60,
-			hasChild 	: !!data[i].gardenName,
-			data		: data[i]
+			className : 'todo-row',
+			height : Ti.UI.SIZE,
+			data : data[i]
 		});
-		
+
 		var verticalView = Ti.UI.createView({
-			width	: 226,
-			left	: 52,
-			layout	: "vertical"
+			width : 226,
+			height : Ti.UI.SIZE,
+			left : 52,
+			layout : "vertical"
 		});
-		
+
 		var contentView = Ti.UI.createView({
-			height	: 30,
-			layout	: "horizontal"
+			height : Ti.UI.SIZE,
+			layout : "horizontal"
 		});
-		
+
 		var expireView = Ti.UI.createView({
-			height	: 30,
-			layout	: "horizontal"
+			height : 30,
+			layout : "horizontal"
 		});
-		
-		if(!bImportant && data[i].important > 0 ){
+
+		if (!bImportant && data[i].important > 0) {
 			bImportant = true;
 			row.header = "중요한 일";
 		}
-		
-		if(!bNormal && data[i].important == 0 ){
+
+		if (!bNormal && data[i].important == 0) {
 			bImportant = true;
 			bNormal = true;
 			row.header = "해야할 일";
 		}
-		
-		if(!bComplete && data[i].complete > 0 ){
+
+		if (!bComplete && data[i].complete > 0) {
 			bImportant = true;
 			bNormal = true;
 			bComplete = true;
 			row.header = "완료";
 		}
-		
+
 		// 할일 제목
 		var lbTitle = Ti.UI.createLabel({
 			text : data[i].title,
-			top	 : 10,
+			top : 10,
 			font : {
 				fontFamily : "NanumGothic",
 				fontWeight : "bold"
 			},
 			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			color : '#6d2c00',
-			width : Ti.UI.SIZE,
+			height: Ti.UI.SIZE,
+			width : Ti.UI.SIZE
 		});
-		
+
 		// 텃밭이름
-		var sName = data[i].gardenName || "텃밭 없음";
+		var sName = "("+data[i].gardenName+")";
+		if( data[i].gardenId.indexOf("g")>-1 && !data[i].gardenName){
+			sName = "(삭제된 텃밭)";
+		}else if(data[i].gardenName == 0){
+			sName = "";
+		}
 		var lbGardenName = Ti.UI.createLabel({
-			top	 : 10,
-			text : "("+ sName +")",
+			top : 10,
+			text : sName,
 			font : {
 				fontFamily : "NanumGothic",
 				fontSize : 12
@@ -119,40 +134,38 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 			textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
 			color : '#6d2c00',
 		});
-		
-		
-		// 미션 기간 
+
+		// 미션 기간
 		var lbExpire = Ti.UI.createLabel({
-			text: "미션기간: "+ getLocalDate(data[i].expire) +"까지",
+			text : "미션기간: " + getLocalDate(data[i].expire) + "까지",
 			font : {
 				fontFamily : "NanumGothic",
 				fontSize : 11
 			},
-			left: 0,
-			bottom: 10
+			left : 0,
+			bottom : 10
 		});
-		
-		
-		// 중요 버튼 
+
+		// 중요 버튼
 		var btnImportant = Ti.UI.createButton({
-			clickName	: "important",
-			width		: 32,
-			height		: 32,
-			right		: 10,
-			backgroundImage: "/images/ui/Favorites/"+ (( data[i].important )? "on":"off") +".png"
-			
+			clickName : "important",
+			width : 32,
+			height : 32,
+			left : 278,
+			backgroundImage : "/images/ui/Favorites/" + ((data[i].important ) ? "on" : "off") + ".png"
+
 		});
-		
-		// 완료 버튼 
+
+		// 완료 버튼
 		var btnComplete = Ti.UI.createButton({
-			clickName	: "complete",
-			left		: 10,
-			width		: 32,
-			height		: 32,
-			backgroundImage: "/images/ui/CheckBox/checkbox_"+ (( data[i].complete )? "full":"empty") +".png"
+			clickName : "complete",
+			left : 10,
+			width : 32,
+			height : 32,
+			backgroundImage : "/images/ui/CheckBox/checkbox_" + ((data[i].complete ) ? "full" : "empty") + ".png"
 		});
-		
-		// 레이아웃 
+
+		// 레이아웃
 		contentView.add(lbTitle);
 		contentView.add(lbGardenName);
 		expireView.add(lbExpire);
@@ -161,20 +174,27 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 		row.add(btnImportant);
 		row.add(verticalView);
 		row.add(btnComplete);
-		
+
 		// 이벤트
-		row.addEventListener("click", function(e){	
-			switch(e.source.clickName){
+		row.addEventListener("click", function(e) {
+			switch(e.source.clickName) {
 				case "important":
-					Ti.App.fireEvent("UPDATE_TODO_IMPORTANT", {todoId: e.rowData.data.todoId, value: !e.rowData.data.important});
+					Ti.App.fireEvent("UPDATE_TODO_IMPORTANT", {
+						todoId : e.rowData.data.todoId,
+						value : !e.rowData.data.important
+					});
 					break;
 
 				case "complete":
-					Ti.App.fireEvent("UPDATE_TODO_COMPLETE", {todoId: e.rowData.data.todoId, value: !e.rowData.data.complete});
+					Ti.App.fireEvent("UPDATE_TODO_COMPLETE", {
+						todoId : e.rowData.data.todoId,
+						value : !e.rowData.data.complete
+					});
 					break;
 			}
-			
+
 		});
+		
 		rows.push(row);
 	}
 

@@ -153,15 +153,6 @@ exports.addGarden = function(_gardenId, _cropId, _name, _period) {
 	for (var i = totalCount - 1; i > -1; --i) {
 		userdb.execute('UPDATE user_tb_gardens SET ordering=' + (i + 1) + ' WHERE ordering =' + i);
 	}
-
-	// var retData = [];
-	// var rows = userdb.execute('SELECT * FROM user_tb_gardens');
-	// while (rows.isValidRow()) {
-	// retData.push({gardenId:rows.fieldByName('gardenId'), sequence:rows.fieldByName('sequence')});
-	// rows.next();
-	// }
-	// Ti.API.info(retData);
-	//
 	userdb.close();
 };
 
@@ -306,6 +297,19 @@ exports.addTodo = function(gardenId, data) {
 
 	userdb.close();
 };
+
+/**
+ * 사용자가 직접 입력한 할일 추가 
+ */
+exports.addUserTodo = function(data) {
+	var thisTime= new Date().getTime();
+	
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', data.gardenId, data.title, "", data.expire, thisTime);
+
+	userdb.close();
+};
+
 /**
  * 할일을 모두 가져온다.
  */
