@@ -136,8 +136,9 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 		});
 
 		// 미션 기간
+		var sExpire = (data[i].expire) ?  "미션기간: " + getLocalDate(data[i].expire) + "까지" : "날짜 지정 없음";
 		var lbExpire = Ti.UI.createLabel({
-			text : "미션기간: " + getLocalDate(data[i].expire) + "까지",
+			text : sExpire,
 			font : {
 				fontFamily : "NanumGothic",
 				fontSize : 11
