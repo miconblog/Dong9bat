@@ -15,25 +15,23 @@ var view = Ti.UI.createView({
 	top : 0,
 	height : Ti.UI.SIZE,
 	width : 320,
-	borderWidth : 1,
-	borderColor : "red",
 	zIndex : 10
 });
 
 var bgimage = require("tabGroup/tab2/DetailBgImage");
 bgimage.setBGView(win, view, scrollView);
 
-// 텃밭 사진
-var photo = Ti.UI.createView({
+// 작물 배경 그림
+var cropBackView = Ti.UI.createView({
 	backgroundImage : '/images/garden/crop_back.png',
 	top : 84,
 	left : 8,
 	width : 68,
 	height : 68,
 	zIndex : 1,
-	clickName : 'photo'
+	clickName : 'cropBackView'
 });
-view.add(photo);
+view.add(cropBackView);
 
 var plantPhase = Ti.UI.createView({
 	backgroundImage : '/images/garden/plant_' + win.data.step + '.png',
@@ -69,14 +67,23 @@ view.add(title);
 var refreshBtn = Ti.UI.createButton({
 	backgroundImage : '/images/garden/detail/refresh.png',
 	backgroundSelectedImage : '/images/garden/detail/refresh_selected.png',
-	top : 130,
+	anchorPoint : {
+		x : 0.5,
+		y : 0.5
+	},
+	top : 125,
 	right : 40,
 	zIndex : 1,
-	width : 31,
-	height : 31
+	width : 36,
+	height : 36
 });
 refreshBtn.addEventListener("click", function(e) {
-
+	var m = Ti.UI.create2DMatrix();
+	m = m.rotate(3 * 360);
+	refreshBtn.animate({
+		transform : m,
+		duration : 2000
+	});
 });
 
 view.add(refreshBtn);
@@ -85,11 +92,11 @@ view.add(refreshBtn);
 var postBtn = Ti.UI.createButton({
 	backgroundImage : '/images/garden/detail/post.png',
 	backgroundSelectedImage : '/images/garden/detail/post_selected.png',
-	top : 130,
+	top : 125,
 	right : 8,
-	width : 31,
+	width : 36,
 	zIndex : 1,
-	height : 31
+	height : 36
 });
 view.add(postBtn);
 
