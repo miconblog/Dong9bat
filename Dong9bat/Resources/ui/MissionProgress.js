@@ -48,6 +48,7 @@ function MissionProgress(row, opt) {
 		zIndex : 2,
 		clickName : 'phase'
 	});
+	row.step = step;
 	row.add(plantPhase);
 
 	this.refresh = function() {

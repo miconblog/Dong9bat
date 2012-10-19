@@ -32,6 +32,7 @@ tableView.addEventListener('click', function(e) {
 	
 	var data = e.rowData.data;
 	data.title = e.rowData.name;
+	data.step = e.rowData.step;
 
 	
 	var detailWin = AppWindow({

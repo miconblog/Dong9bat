@@ -5,25 +5,19 @@ require("tabGroup/tab2/DetailHeader").set(win);
 
 var scrollView = Ti.UI.createScrollView({
 	top : 0,
-	//height : 460,
 	width : 320,
-	zIndex:10,
+	zIndex : 10,
 	showVerticalScrollIndicator : true,
 	showHorizontalScrollIndicator : false
-	//contentWidth : 'auto',
-	//contentHeight : 'auto'
 });
 // 뒷배경 뷰~
 var view = Ti.UI.createView({
 	top : 0,
-	height : 'auto',
+	height : Ti.UI.SIZE,
 	width : 320,
 	borderWidth : 1,
 	borderColor : "red",
-	zIndex:10
-	//backgroundColor: "blue",
-	//layout:"vertical"
-	//opacity: 0.5
+	zIndex : 10
 });
 
 var bgimage = require("tabGroup/tab2/DetailBgImage");
@@ -41,6 +35,17 @@ var photo = Ti.UI.createView({
 });
 view.add(photo);
 
+var plantPhase = Ti.UI.createView({
+	backgroundImage : '/images/garden/plant_' + win.data.step + '.png',
+	top : 84,
+	left : 8,
+	width : 68,
+	height : 68,
+	zIndex : 2,
+	clickName : 'phase'
+});
+view.add(plantPhase);
+
 // 작물 이름
 var title = Ti.UI.createLabel({
 	color : '#FFF',
@@ -56,7 +61,7 @@ var title = Ti.UI.createLabel({
 	height : 'auto',
 	width : 200,
 	clickName : 'title',
-	text : '토마토 텃밭'
+	text : win.data.cropInfo.name
 });
 view.add(title);
 
@@ -76,7 +81,7 @@ refreshBtn.addEventListener("click", function(e) {
 
 view.add(refreshBtn);
 
-// 글쓰기 버튼 
+// 글쓰기 버튼
 var postBtn = Ti.UI.createButton({
 	backgroundImage : '/images/garden/detail/post.png',
 	backgroundSelectedImage : '/images/garden/detail/post_selected.png',
