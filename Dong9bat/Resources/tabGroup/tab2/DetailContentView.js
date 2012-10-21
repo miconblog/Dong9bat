@@ -1,5 +1,5 @@
 Ti.include("/util/util.js");
-setContentView = function(tv, data) {
+setContentView = function(tv, data, isReload) {
 	var rows = tv.getData();
 
 	for (var i = 0; i < data.length; i++) {
@@ -8,6 +8,7 @@ setContentView = function(tv, data) {
 			className : 'garden-row',
 			clickName : 'row',
 			backgroundImage : '/images/garden/detail/tb_bg.png',
+			rowId : data[i].no,
 			layout : 'horizontal'
 		});
 
@@ -77,7 +78,7 @@ setContentView = function(tv, data) {
 		});
 
 		if (data[i].contentType == 2) {// 사용자 컨텐츠
-
+			row.editable = true;
 			var bgTop = Ti.UI.createView({
 				backgroundImage : "/images/garden/detail/balloon_t.png",
 				width : 512 / 2,
@@ -106,7 +107,7 @@ setContentView = function(tv, data) {
 			});
 
 			var img = Ti.UI.createView({
-				backgroundImage : "/images/sample/crop_tomato.jpg",
+				backgroundImage : data[i].content,
 				zIndex : 5,
 				left : 7,
 				right : 7,
@@ -118,7 +119,9 @@ setContentView = function(tv, data) {
 			title.bottom = 9;
 			pubDate.bottom = 9;
 
-			bgMiddle.add(img);
+			if (data[i].content.length > 0) {
+				bgMiddle.add(img);
+			}
 			bgMiddle.add(title);
 			bgMiddle.add(pubDate);
 			contentView.add(bgTop);
@@ -131,7 +134,7 @@ setContentView = function(tv, data) {
 
 			})
 		} else {// 미션
-
+			row.editable = false;
 			contentView.add(title);
 			dateView.add(pubDate);
 		}
@@ -163,7 +166,7 @@ setContentView = function(tv, data) {
 		}
 	}
 	console.log("데이터 --> ", rows, rows.length);
-	if (rows.length > 3) {
+	if (isReload && data.length >= 3) {
 		tv.setHeight(Ti.UI.SIZE);
 	}
 }

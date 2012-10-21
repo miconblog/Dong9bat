@@ -171,10 +171,16 @@ clickView.addEventListener("click", function(e) {
 	switch(e.source.clickName) {
 		case "refresh":
 			var m = Ti.UI.create2DMatrix();
-			m = m.rotate(-3 * 60);
+			m = m.rotate(-180, 179);
+			m2 = m.rotate(179);
 			refreshBtn.animate({
 				transform : m,
-				duration : 2000
+				duration : 1000
+			}, function() {
+				refreshBtn.animate({
+					transform : m2,
+					duration : 1000
+				})
 			});
 			break;
 
@@ -183,7 +189,8 @@ clickView.addEventListener("click", function(e) {
 				title : '텃밭 일지 등록',
 				modal : true,
 				backgroundColor : '#ccc',
-				url : '/windows/WriteForm.js'
+				url : '/windows/WriteForm.js',
+				gardenId : win.data.gardenId
 			});
 			writeForm.open();
 

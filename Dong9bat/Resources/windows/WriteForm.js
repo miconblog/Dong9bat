@@ -30,9 +30,15 @@ var save = Ti.UI.createButton({
 	backgroundSelectedImage : '/images/button_edit_selected.png'
 });
 save.addEventListener("click", function(e) {
-
-	win.close();
-
+	if (taNote.value.length < 1) {
+		alert("일지를 작성하세요!");
+	} else {
+		Ti.App.fireEvent("ADD_GARDEN_HISTORY", {
+			gardenId : win.gardenId,
+			note : taNote.value
+		});
+		win.close();
+	}
 });
 win.rightNavButton = save;
 
@@ -86,6 +92,7 @@ taNote.addEventListener("return", function(e) {
 		row.hasCheck = false;
 	}
 	taNote.blur();
+	save.fireEvent("click");
 });
 row.add(taNote);
 rows.push(row);

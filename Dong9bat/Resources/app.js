@@ -251,6 +251,15 @@ Ti.App.addEventListener("UPDATE_TODO_COMPLETE", function(e){
 	Ti.App.fireEvent("LOAD_TODOS");
 });
 
+Ti.App.addEventListener("ADD_GARDEN_HISTORY", function(e){
+	db.addGardenHistory(e.gardenId, e.note, 2);
+	var data = db.getRecentGardenHistory(e.gardenId);
+	Ti.App.fireEvent("UPDATE_GARDEN_HISTORY", {data: data});
+});
+
+Ti.App.addEventListener("DELETE_GARDEN_HISTORY", function(e){
+	db.deleteGardenHistroy(e.historyId);
+});
 
 Ti.App.addEventListener("LOAD_GARDEN_DETAIL_CONTENT", function(e){
 	var data = db.getGardenHistory(e.gardenId);
