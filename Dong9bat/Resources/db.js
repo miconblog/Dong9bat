@@ -367,7 +367,12 @@ exports.updateTodoComplete = function(todoId, value){
 };
 
 
-
+/**
+ * 텃밭 순서 변경
+ * @param {Object} _gardenId
+ * @param {Object} _from
+ * @param {Object} _to
+ */
 exports.updateGardenOrdering = function(_gardenId, _from, _to) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	userdb.execute('UPDATE user_tb_gardens SET ordering=? WHERE ordering=?', _from, _to);

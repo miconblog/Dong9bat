@@ -1,4 +1,4 @@
-exports.setBGView = function(win, view, scrollView) {
+exports.setTopView = function(win, view, scrollView) {
 	var imgView = Ti.UI.createImageView({
 		width : 320,
 		height : 320,
@@ -8,9 +8,7 @@ exports.setBGView = function(win, view, scrollView) {
 		zIndex : 0
 	});
 	win.add(imgView);
-	bAttachWin = true;
 
-	//var f = Ti.App.Properties.getString("filename");
 	console.log("배경 이미지 경로는? ", win.data.bgImg);
 	var f = win.data.bgImg;
 	var bgImage = null;
@@ -92,39 +90,91 @@ exports.setBGView = function(win, view, scrollView) {
 	};
 
 	scrollView.addEventListener("scroll", function(e) {
-
-		if (e.y < 0) {
-			Ti.API.info(e.y);
+		if (e.y <= 0) {	// 위로 올리면...
 			imgView.animate({
 				top : -80 - (e.y / 2),
 				duration : 10
 			});
-
-			if (!bAttachWin) {
-				view.remove(imgView);
-				win.add(imgView);
-				bAttachWin = true;
-			}
-
-		} else {
-			if (bAttachWin) {
-				bAttachWin = false;
-				win.remove(imgView);
-				view.add(imgView);
-			}
-		}
-
+		} 
 	});
+
 	// 배경 사진을 클릭할수있는 영역
 	var clickView = Ti.UI.createView({
-		top : 0,
 		height : 160,
-		width : 320,
-		zIndex : 1
-		//borderWidth : 1,
-		//borderColor : "yellow",
-		//backgroundColor : "green"
+		width : 320
 	});
+
+	// 작물 배경 그림
+	var cropBackView = Ti.UI.createView({
+		backgroundImage : '/images/garden/crop_back.png',
+		bottom : 6,
+		left : 8,
+		width : 68,
+		height : 68,
+		zIndex : 1,
+		clickName : 'cropBackView'
+	});
+
+	var cropView = Ti.UI.createView({
+		backgroundImage : '/images/garden/plant_' + win.data.step + '.png',
+		bottom : 6,
+		left : 8,
+		width : 68,
+		height : 68,
+		zIndex : 2,
+		clickName : 'phase'
+	});
+
+	// 작물 이름
+	var cropName = Ti.UI.createLabel({
+		color : '#FFF',
+		font : {
+			fontSize : '13',
+			fontWeight : 'bold',
+			fontFamily : 'NanumGothic'
+		},
+		left : 84,
+		bottom : 6,
+		textAlign : Ti.UI.TEXT_ALIGNMENT_LEFT,
+		height : Ti.UI.SIZE,
+		width : Ti.UI.SIZE,
+		clickName : 'cropName',
+		text : win.data.cropInfo.name
+	});
+
+	// 새로 고침 버튼
+	var refreshBtn = Ti.UI.createButton({
+		backgroundImage : '/images/garden/detail/refresh.png',
+		backgroundSelectedImage : '/images/garden/detail/refresh_selected.png',
+		anchorPoint : {
+			x : 0.5,
+			y : 0.5
+		},
+		bottom : 6,
+		right : 40,
+		width : 36,
+		height : 36
+	});
+	// refreshBtn.addEventListener("click", function(e) {
+	// var m = Ti.UI.create2DMatrix();
+	// m = m.rotate(3 * 360);
+	// refreshBtn.animate({
+	// transform : m,
+	// duration : 2000
+	// });
+	// });
+
+	// 글쓰기 버튼
+	var postBtn = Ti.UI.createButton({
+		backgroundImage : '/images/garden/detail/post.png',
+		backgroundSelectedImage : '/images/garden/detail/post_selected.png',
+		bottom : 6,
+		right : 8,
+		width : 36,
+		height : 36
+	});
+
+	// 이벤트
 	clickView.addEventListener("click", function(e) {
 		var dialog = Titanium.UI.createOptionDialog({
 			options : ['사진 찍기', '사진 선택', '노트 쓰기', '취소'],
@@ -154,5 +204,11 @@ exports.setBGView = function(win, view, scrollView) {
 		});
 		dialog.show();
 	});
+
+	clickView.add(cropBackView);
+	clickView.add(cropView);
+	clickView.add(cropName);
+	clickView.add(refreshBtn);
+	clickView.add(postBtn);
 	view.add(clickView);
 }

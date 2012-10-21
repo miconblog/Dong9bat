@@ -19,7 +19,7 @@ var tableView = Ti.UI.createTableView({
 	moveable : true,
 	search : search,
 	filterAttribute : 'filter',
-	separatorColor : '#999',
+	separatorColor:'#d3c1b2',
 	height: 368,
 	top:0,
 	width: 320
@@ -37,7 +37,8 @@ tableView.addEventListener('click', function(e) {
 	
 	var detailWin = AppWindow({
 		url : "./GardenDetailWindow.js",
-		backgroundImage: '/images/crops/detail/page_back.png'
+		backgroundImage: '/images/crops/detail/page_back.png',
+		layout: "composite"
 	}, data);
 	Ti.UI.currentTab.open(detailWin);
 });
