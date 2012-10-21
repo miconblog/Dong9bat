@@ -1,27 +1,51 @@
 var win = Ti.UI.currentWindow;
 // 헤더 타이틀 설정
-require("tabGroup/tab2/DetailHeader").set(win);
-
+Ti.include("/tabGroup/tab2/DetailHeader.js");
 var scrollView = Ti.UI.createScrollView({
 	top : 0,
 	width : 320,
 	zIndex : 10,
-	layout: "vertical",
+	layout : "vertical",
 	showVerticalScrollIndicator : true,
 	showHorizontalScrollIndicator : false
 });
 // 뒷배경 뷰~
 var view = Ti.UI.createView({
 	height : Ti.UI.SIZE,
-	layout: "vertical",
+	layout : "vertical",
 	width : 320,
-	zIndex : 10
+	zIndex : 10,
+	data : []
 });
 
-require("tabGroup/tab2/DetailTopView").setTopView(win, view, scrollView);
-require("tabGroup/tab2/DetailContentView").setContentView(win, view);
+Ti.include("/tabGroup/tab2/DetailTopView.js");
+Ti.include("/tabGroup/tab2/DetailContentView.js");
 
-
+// 컨텐츠 테이블 뷰
+var tableView = Ti.UI.createTableView({
+	height : 360,
+	separatorColor : '#d3c1b2',
+	minRowHeight : 60,
+	zIndex : 10,
+	backgroundImage : '/images/crops/detail/page_back.png',
+	scrollable : false
+});
+setContentView(tableView, [{
+	title : "동구밭에 오신걸 환영합니다.",
+	contentType : 1,
+	pubDate : new Date().getTime()
+}]);
+view.add(tableView);
 scrollView.add(view);
 win.add(scrollView);
 
+Ti.App.addEventListener("DRAW_GARDEN_DETAIL_CONTENT", function(e) {
+	console.log("텃밭 상세 정보", e.data);
+	setContentView(tableView, e.data);
+	
+})
+win.addEventListener("open", function() {
+	Ti.App.fireEvent("LOAD_GARDEN_DETAIL_CONTENT", {
+		gardenId : win.data.gardenId
+	});
+});

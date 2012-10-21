@@ -1,35 +1,8 @@
-exports.setContentView = function(win, view) {
-	// 테이블 뷰
-	var tableView = Ti.UI.createTableView({
-		height : Ti.UI.SIZE,
-		separatorColor:'#d3c1b2',
-		//touchEnabled : false,
-		backgroundColor : "red",
-		scrollable : false
-	});
+Ti.include("/util/util.js");
+setContentView = function(tv, data) {
+	var rows = tv.getData();
 
-	// Populate the TableView data.
-	var data = [{
-		title : '텃밭 start',
-		date : '2012-05-20',
-		contentType : 1, // 시스템
-	}, {
-		title : 'TODO 01 : 텃밭에 물을 주세요',
-		date : '2012-05-20',
-		contentType : 4,  	// 미션 완료
-	}, {
-		title : '오늘은 토마토를 땃다. 매우 먹음직스럽군~ 이히히히 배고프다. 엄마아빠. 빵ㅇ사주이ㅓ링ㄴㄹㅁㅇㅋㅋㅋ ',
-		date : '2012-05-20',
-		contentType : 2,	// 사용자 
-	}, {
-		title : 'TODO 02 : 텃밭에 거름을 주세요',
-		date : '2012-05-20',
-		contentType : 3  	// 미션 미완료
-	}];
-
-	var rowData = [];
-	// create the rest of the rows
-	for (var i = data.length - 1; i > -1; i--) {
+	for (var i = 0; i < data.length; i++) {
 		var row = Ti.UI.createTableViewRow({
 			height : Ti.UI.SIZE,
 			className : 'garden-row',
@@ -68,7 +41,7 @@ exports.setContentView = function(win, view) {
 			height : Ti.UI.SIZE,
 			layout : 'horizontal'
 		});
-		
+
 		// 날짜
 		var dateView = Ti.UI.createView({
 			height : Ti.UI.SIZE,
@@ -99,7 +72,7 @@ exports.setContentView = function(win, view) {
 			},
 			left : 7,
 			bottom : 23,
-			text : data[i].date,
+			text : getLocalDate(data[i].pubDate),
 			height : Ti.UI.SIZE
 		});
 
@@ -140,7 +113,7 @@ exports.setContentView = function(win, view) {
 				width : Ti.UI.FILL,
 				height : 200
 			});
-			
+
 			title.top = 12;
 			title.bottom = 9;
 			pubDate.bottom = 9;
@@ -166,7 +139,7 @@ exports.setContentView = function(win, view) {
 		if (data[i].contentType == 3 || data[i].contentType == 4) {
 			row.hasChild = true;
 			row.selectionStyle = true;
-		}else{
+		} else {
 			row.selectionStyle = Ti.UI.iPhone.TableViewCellSelectionStyle.NONE;
 		}
 
@@ -176,15 +149,21 @@ exports.setContentView = function(win, view) {
 
 		row.add(leftView);
 		row.add(rightView);
-		rowData.push(row);
+
+		if (rows.length < 1) {
+			tv.appendRow(row);
+			tv.appendRow(Ti.UI.createTableViewRow({
+				height : 80,
+				className : 'dummy-row',
+				backgroundImage : '/images/garden/detail/tb_bg.png',
+				layout : 'horizontal'
+			}));
+		} else {
+			tv.insertRowBefore(0, row);
+		}
 	}
-
-	tableView.setData(rowData);
-
-	// Listen for click events.
-	tableView.addEventListener('click', function(e) {
-		//alert('title: \'' + e.row.title + '\', section: \'' + e.section.headerTitle + '\', index: ' + e.index);
-	});
-
-	view.add(tableView);
+	console.log("데이터 --> ", rows, rows.length);
+	if (rows.length > 3) {
+		tv.setHeight(Ti.UI.SIZE);
+	}
 }

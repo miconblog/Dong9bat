@@ -185,7 +185,7 @@ Ti.App.addEventListener("ADD_MISSION_TO_TODOS", function(e){
 	
 	for(var i=0; i < data.length; ++i){
 		console.log("할일 검색", e.gardenId, data[i]);
-		db.addTodo(e.gardenId, data[i]);	
+		db.addTodo(e.gardenId, data[i]);
 	}
 });
 
@@ -215,6 +215,7 @@ Ti.App.addEventListener("ADD_USER_TODOS", function(e){
 	if( !!e.gardenId ) {
 		// 텃밭 히스토리에도 삽입
 		console.log("TODO: 텃밭 히스토리에도 삽입", e);
+		//db.addGardenHistroy()
 	}
 	
 	// 사용자 할일 추가
@@ -251,6 +252,10 @@ Ti.App.addEventListener("UPDATE_TODO_COMPLETE", function(e){
 });
 
 
+Ti.App.addEventListener("LOAD_GARDEN_DETAIL_CONTENT", function(e){
+	var data = db.getGardenHistory(e.gardenId);
+	Ti.App.fireEvent("DRAW_GARDEN_DETAIL_CONTENT", {data: data, rowData: e.data});
+});
 
 if (Ti.version < 1.8) {
 	alert('Sorry - this application template requires Titanium Mobile SDK 1.8 or later');

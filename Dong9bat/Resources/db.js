@@ -153,6 +153,15 @@ exports.addGarden = function(_gardenId, _cropId, _name, _period) {
 	for (var i = totalCount - 1; i > -1; --i) {
 		userdb.execute('UPDATE user_tb_gardens SET ordering=' + (i + 1) + ' WHERE ordering =' + i);
 	}
+	
+	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', _gardenId, 1, "텃밭을 시작합니다.", "",startDate);
+	userdb.close();
+};
+
+exports.addGardenHistory = function(gardenId, title, contentType) {
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var pubDate = new Date().getTime();
+	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', _gardenId, 1, "텃밭을 시작합니다.", "",startDate);
 	userdb.close();
 };
 
@@ -200,7 +209,9 @@ exports.getGardenNameById = function(gardenId){
 exports.getGardenHistory = function(gardenId){
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var retData = [];
-	var rows = userdb.execute('SELECT * FROM user_tb_garden_history ORDER BY no ASC');
+	
+	console.log("텃밭 가져오기:", gardenId);
+	var rows = userdb.execute('SELECT * FROM user_tb_garden_history WHERE gardenId=? ORDER BY no ASC', gardenId);
 	while (rows.isValidRow()) {
 		retData.push({
 			no 			: rows.fieldByName('no'),
@@ -208,7 +219,7 @@ exports.getGardenHistory = function(gardenId){
 			contentType : rows.fieldByName('contentType'),
 			title 		: rows.fieldByName('title'),
 			content 	: rows.fieldByName('content'),
-			pubDate 	: rows.fieldByName('pubDate')
+			pubDate 	: rows.fieldByName('pubDate') - 0
 		});
 		rows.next();
 	}
@@ -285,7 +296,7 @@ exports.getCropMissionByDay = function(_cropId, _day) {
 
 
 /**
- * 할일 추가
+ * 할일 추가 하면 히스토리에도 추가 
  */
 exports.addTodo = function(gardenId, data) {
 	console.log("사용자 할일에 추가: ", gardenId, data);
@@ -294,6 +305,9 @@ exports.addTodo = function(gardenId, data) {
 
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', gardenId, data.title, data.content, thisTime + expireTime, thisTime);
+	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', gardenId, 3, data.title, data.content, thisTime);
+	userdb.close();
+
 
 	userdb.close();
 };
