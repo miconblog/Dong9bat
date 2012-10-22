@@ -109,7 +109,7 @@ setContentView = function(tv, data, isReload) {
 			title.bottom = 9;
 			pubDate.bottom = 9;
 
-			if (data[i].content.length > 0) {
+			if (data[i].content && data[i].content.length > 0) {
 				var img = Ti.UI.createView({
 					backgroundImage : Titanium.Filesystem.applicationDataDirectory + data[i].content,
 					zIndex : 5,
@@ -126,11 +126,6 @@ setContentView = function(tv, data, isReload) {
 			contentView.add(bgMiddle);
 			contentView.add(bgBotton);
 
-			img.addEventListener("load", function(e) {
-				console.log("LOAD");
-				rightView.add(img);
-
-			})
 		} else {// 미션
 			row.editable = false;
 			contentView.add(title);
