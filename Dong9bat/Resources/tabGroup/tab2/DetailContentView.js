@@ -1,7 +1,5 @@
 Ti.include("/util/util.js");
 setContentView = function(tv, data, isReload) {
-	var rows = tv.getData();
-
 	for (var i = 0; i < data.length; i++) {
 		var row = Ti.UI.createTableViewRow({
 			height : Ti.UI.SIZE,
@@ -9,6 +7,7 @@ setContentView = function(tv, data, isReload) {
 			clickName : 'row',
 			backgroundImage : '/images/garden/detail/tb_bg.png',
 			rowId : data[i].no,
+			zIndex : 1,
 			layout : 'horizontal'
 		});
 
@@ -152,21 +151,6 @@ setContentView = function(tv, data, isReload) {
 
 		row.add(leftView);
 		row.add(rightView);
-
-		if (rows.length < 1) {
-			tv.appendRow(row);
-			tv.appendRow(Ti.UI.createTableViewRow({
-				height : 80,
-				className : 'dummy-row',
-				backgroundImage : '/images/garden/detail/tb_bg.png',
-				layout : 'horizontal'
-			}));
-		} else {
-			tv.insertRowBefore(0, row);
-		}
-	}
-	console.log("데이터 --> ", rows, rows.length);
-	if (isReload && data.length >= 3) {
-		tv.setHeight(Ti.UI.SIZE);
+		tv.insertRowAfter(0, row);
 	}
 }

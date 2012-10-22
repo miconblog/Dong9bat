@@ -1,12 +1,36 @@
+var row = Ti.UI.createTableViewRow({
+	width : 320,
+	height : 160,
+	zIndex : 0,
+	editable : false
+});
+
 var imgView = Ti.UI.createImageView({
 	width : 320,
 	height : 320,
 	image : win.data.bgImgPath,
 	backgroundColor : "#345",
-	top : -80,
-	zIndex : 0
+	top : 80,
+	zIndex: 0
 });
-win.add(imgView);
+
+var wrapImg = Ti.UI.createView({
+	width : 320,
+	height : 320,
+	top : -160
+});
+wrapImg.add(imgView);
+
+
+tableView.addEventListener("scroll", function(e) {
+	console.log("테이블뷰 스크롤: ", e.contentOffset.y, e.contentSize)
+	if (e.contentOffset.y <= 0) {// 위로 올리면...
+		imgView.animate({
+			top : 80 + (e.contentOffset.y / 2),
+			duration : 10
+		});
+	}
+});
 
 console.log("배경 이미지 경로는? ", win.data.bgImg);
 var f = win.data.bgImg;
@@ -83,15 +107,6 @@ var openPhotoAlbum = function() {
 		allowEditing : true
 	});
 };
-
-scrollView.addEventListener("scroll", function(e) {
-	if (e.y <= 0) {// 위로 올리면...
-		imgView.animate({
-			top : -80 - (e.y / 2),
-			duration : 10
-		});
-	}
-});
 
 // 배경 사진을 클릭할수있는 영역
 var clickView = Ti.UI.createView({
@@ -221,9 +236,11 @@ clickView.addEventListener("click", function(e) {
 
 });
 
+row.add(wrapImg);
 clickView.add(cropBackView);
 clickView.add(cropView);
 clickView.add(cropName);
 clickView.add(refreshBtn);
 clickView.add(postBtn);
-view.add(clickView);
+row.add(clickView);
+tableView.appendRow(row);
