@@ -252,7 +252,7 @@ Ti.App.addEventListener("UPDATE_TODO_COMPLETE", function(e){
 });
 
 Ti.App.addEventListener("ADD_GARDEN_HISTORY", function(e){
-	db.addGardenHistory(e.gardenId, e.note, 2);
+	db.addGardenHistory(e.gardenId, e.note, 2, e.content);
 	var data = db.getRecentGardenHistory(e.gardenId);
 	Ti.App.fireEvent("UPDATE_GARDEN_HISTORY", {data: data});
 });

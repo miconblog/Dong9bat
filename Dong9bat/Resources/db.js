@@ -177,10 +177,10 @@ exports.getRecentGardenHistory = function(gardenId) {
 	return retData;
 };
 
-exports.addGardenHistory = function(gardenId, title, contentType) {
+exports.addGardenHistory = function(gardenId, title, contentType, content) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var pubDate = new Date().getTime();
-	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', gardenId, contentType, title, "", pubDate);
+	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', gardenId, contentType, title, content, pubDate);
 	userdb.close();
 };
 

@@ -105,20 +105,19 @@ setContentView = function(tv, data, isReload) {
 				layout : "horizontal"
 			});
 
-			var img = Ti.UI.createView({
-				backgroundImage : data[i].content,
-				zIndex : 5,
-				left : 7,
-				right : 7,
-				width : Ti.UI.FILL,
-				height : 200
-			});
-
 			title.top = 12;
 			title.bottom = 9;
 			pubDate.bottom = 9;
 
 			if (data[i].content.length > 0) {
+				var img = Ti.UI.createView({
+					backgroundImage : Titanium.Filesystem.applicationDataDirectory + data[i].content,
+					zIndex : 5,
+					left : 7,
+					right : 7,
+					width : Ti.UI.FILL,
+					height : 200
+				});
 				bgMiddle.add(img);
 			}
 			bgMiddle.add(title);
