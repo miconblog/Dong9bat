@@ -186,6 +186,10 @@ Ti.App.addEventListener("ADD_MISSION_TO_TODOS", function(e){
 	for(var i=0; i < data.length; ++i){
 		console.log("할일 검색", e.gardenId, data[i]);
 		db.addTodo(e.gardenId, data[i]);
+		
+		var objs = db.getRecentUserTodo(e.gardenId);
+		console.log("검색된 할일 데이터: ", objs);
+		db.addGardenHistory(e.gardenId, 3, data[i].title, null, objs[0].todoId);
 	}
 });
 
@@ -212,15 +216,15 @@ Ti.App.addEventListener("LOAD_TODOS", function(e){
  * 할일 추가
  */
 Ti.App.addEventListener("ADD_USER_TODOS", function(e){
-	if( !!e.gardenId ) {
-		// 텃밭 히스토리에도 삽입
-		console.log("TODO: 텃밭 히스토리에도 삽입", e);
-		//db.addGardenHistroy()
-	}
-	
 	// 사용자 할일 추가
 	db.addUserTodo(e);
-	
+	if( !!e.gardenId ) {
+		var data = db.getRecentUserTodo(e.gardenId);
+
+		// 텃밭 히스토리에도 삽입
+		console.log("TODO: 텃밭 히스토리에도 삽입", e, data);
+		db.addGardenHistory(e.gardenId, 3, e.title, null, data.todoId);
+	}
 });
 
 /**
@@ -248,11 +252,14 @@ Ti.App.addEventListener("UPDATE_TODO_IMPORTANT", function(e){
  */
 Ti.App.addEventListener("UPDATE_TODO_COMPLETE", function(e){
 	db.updateTodoComplete(e.todoId, e.value ? 1:0);
+	
+	console.log("할일 완료: ", e);
+	db.updateGardenHistory(e.gardenId, e.todoId, (e.value==1) ? 4:3);
 	Ti.App.fireEvent("LOAD_TODOS");
 });
 
 Ti.App.addEventListener("ADD_GARDEN_HISTORY", function(e){
-	db.addGardenHistory(e.gardenId, e.note, 2, e.content);
+	db.addGardenHistory(e.gardenId, 2, e.note, e.userImg, null);
 	var data = db.getRecentGardenHistory(e.gardenId);
 	Ti.App.fireEvent("UPDATE_GARDEN_HISTORY", {data: data});
 });

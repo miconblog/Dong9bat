@@ -158,6 +158,11 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 		});
 
 		// 완료 버튼
+		if( data[i].complete ){
+			row.editable = true;
+		}else{
+			row.editable = false;
+		}
 		var btnComplete = Ti.UI.createButton({
 			clickName : "complete",
 			left : 10,
@@ -188,6 +193,7 @@ Ti.App.addEventListener("DRAW_TODOS", function(e) {
 
 				case "complete":
 					Ti.App.fireEvent("UPDATE_TODO_COMPLETE", {
+						gardenId: e.rowData.data.gardenId,
 						todoId : e.rowData.data.todoId,
 						value : !e.rowData.data.complete
 					});

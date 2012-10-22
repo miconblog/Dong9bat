@@ -154,33 +154,16 @@ exports.addGarden = function(_gardenId, _cropId, _name, _period) {
 		userdb.execute('UPDATE user_tb_gardens SET ordering=' + (i + 1) + ' WHERE ordering =' + i);
 	}
 
-	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', _gardenId, 1, "텃밭을 시작합니다.", "", startDate);
+	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, content, userImg, todoId, pubDate) VALUES (?,?,?,?,?,?)', _gardenId, 1, "텃밭을 시작합니다.", null, null, startDate);
 	userdb.close();
 };
 
-exports.getRecentGardenHistory = function(gardenId) {
-	var userdb = Ti.Database.open(USER_DATABASE_NAME);
-	var row = userdb.execute('SELECT * FROM user_tb_garden_history WHERE gardenId=? ORDER BY no DESC LIMIT 1', gardenId);
-
-	var retData = [];
-	if (row.isValidRow()) {
-		retData.push({
-			no : row.fieldByName('no'),
-			gardenId : row.fieldByName('gardenId'),
-			contentType : row.fieldByName('contentType'),
-			title : row.fieldByName('title'),
-			content : row.fieldByName('content'),
-			pubDate : row.fieldByName('pubDate') - 0
-		});
-	}
-	userdb.close();
-	return retData;
-};
-
-exports.addGardenHistory = function(gardenId, title, contentType, content) {
+exports.addGardenHistory = function(gardenId, contentType, content, userImg, todoId) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var pubDate = new Date().getTime();
-	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', gardenId, contentType, title, content, pubDate);
+
+	console.log("히스토리 등록: ", gardenId, contentType, content, userImg, todoId);
+	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, content, userImg, todoId, pubDate) VALUES (?,?,?,?,?,?)', gardenId, contentType, content, userImg, todoId, pubDate);
 	userdb.close();
 };
 
@@ -242,14 +225,41 @@ exports.getGardenHistory = function(gardenId) {
 			no : rows.fieldByName('no'),
 			gardenId : rows.fieldByName('gardenId'),
 			contentType : rows.fieldByName('contentType'),
-			title : rows.fieldByName('title'),
 			content : rows.fieldByName('content'),
+			userImg : rows.fieldByName('userImg'),
+			todoId : rows.fieldByName('todoId'),
 			pubDate : rows.fieldByName('pubDate') - 0
 		});
 		rows.next();
 	}
 	userdb.close();
 	return retData;
+};
+
+exports.getRecentGardenHistory = function(gardenId) {
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var row = userdb.execute('SELECT * FROM user_tb_garden_history WHERE gardenId=? ORDER BY no DESC LIMIT 1', gardenId);
+
+	var retData = [];
+	if (row.isValidRow()) {
+		retData.push({
+			no : row.fieldByName('no'),
+			gardenId : row.fieldByName('gardenId'),
+			contentType : row.fieldByName('contentType'),
+			content : row.fieldByName('content'),
+			userImg : row.fieldByName('userImg'),
+			todoId : row.fieldByName('todoId'),
+			pubDate : row.fieldByName('pubDate') - 0
+		});
+	}
+	userdb.close();
+	return retData;
+};
+
+exports.updateGardenHistory = function(gardenId, todoId, contentType) {
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	userdb.execute('UPDATE user_tb_garden_history SET contentType=? WHERE gardenId=? AND todoId=?', contentType, gardenId, todoId);
+	userdb.close();
 };
 
 var getCurrentPlantPeriodString = function() {
@@ -290,7 +300,7 @@ exports.getPlantPeriodStep = function(_cropId) {
  */
 exports.getCropMissionByDay = function(_cropId, _day) {
 	var db = Ti.Database.open(SYS_DATABASE_NAME);
-	var row = db.execute('SELECT missionId FROM tb_mission_by_crop WHERE cropId=' + _cropId + ' AND day=' + _day);
+	var row = db.execute('SELECT DISTINCT missionId FROM tb_mission_by_crop WHERE cropId=' + _cropId + ' AND day=' + _day);
 	console.log("검색중...", _cropId, _day, row);
 	var missionIds = [];
 	var missions = [];
@@ -326,12 +336,8 @@ exports.addTodo = function(gardenId, data) {
 	console.log("사용자 할일에 추가: ", gardenId, data);
 	var thisTime = new Date().getTime();
 	var expireTime = data.expire * 1000 * 60 * 24;
-
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	userdb.execute('INSERT INTO user_tb_todos(gardenId, title, content, expire, startDate) VALUES (?,?,?,?,?)', gardenId, data.title, data.content, thisTime + expireTime, thisTime);
-	userdb.execute('INSERT INTO user_tb_garden_history(gardenId, contentType, title, content, pubDate) VALUES (?,?,?,?,?)', gardenId, 3, data.title, data.content, thisTime);
-	userdb.close();
-
 	userdb.close();
 };
 
@@ -401,6 +407,26 @@ exports.updateTodoComplete = function(todoId, value) {
 	var userdb = Ti.Database.open(USER_DATABASE_NAME);
 	var row = userdb.execute('UPDATE user_tb_todos SET complete=? WHERE todoId=?', value, todoId);
 	userdb.close();
+};
+
+exports.getRecentUserTodo = function(gardenId) {
+	var userdb = Ti.Database.open(USER_DATABASE_NAME);
+	var row = userdb.execute('SELECT * FROM user_tb_todos WHERE gardenId=? ORDER BY todoId DESC LIMIT 1', gardenId);
+	var data = [];
+
+	if (row.isValidRow()) {
+		data.push({
+			todoId : row.fieldByName('todoId'),
+			gardenId : row.fieldByName('gardenId'),
+			title : row.fieldByName('title'),
+			content : row.fieldByName('content'),
+			expire : row.fieldByName('expire') - 0,
+			complete : row.fieldByName('complete'),
+			important : row.fieldByName('important')
+		});
+	}
+	userdb.close();
+	return data;
 };
 
 /**

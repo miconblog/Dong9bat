@@ -18,7 +18,7 @@ Ti.include("/tabGroup/tab2/DetailContentView.js");
 
 
 setContentView(tableView, [{
-	title : "동구밭에 오신걸 환영합니다.",
+	content : "동구밭에 오신걸 환영합니다.",
 	contentType : 1,
 	pubDate : new Date().getTime()
 }], false);

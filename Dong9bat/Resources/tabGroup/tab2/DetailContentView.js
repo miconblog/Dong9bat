@@ -49,7 +49,7 @@ setContentView = function(tv, data, isReload) {
 		});
 
 		// 컨텐츠 제목
-		var title = Ti.UI.createLabel({
+		var content = Ti.UI.createLabel({
 			color : '#8B4619',
 			font : {
 				fontSize : '13',
@@ -58,7 +58,7 @@ setContentView = function(tv, data, isReload) {
 			},
 			left : 7,
 			top : 23,
-			text : data[i].title,
+			text : data[i].content,
 			height : Ti.UI.SIZE
 		});
 
@@ -105,13 +105,13 @@ setContentView = function(tv, data, isReload) {
 				layout : "horizontal"
 			});
 
-			title.top = 12;
-			title.bottom = 9;
+			content.top = 12;
+			content.bottom = 9;
 			pubDate.bottom = 9;
 
-			if (data[i].content && data[i].content.length > 0) {
+			if (data[i].userImg && data[i].userImg.length > 0) {
 				var img = Ti.UI.createView({
-					backgroundImage : Titanium.Filesystem.applicationDataDirectory + data[i].content,
+					backgroundImage : Titanium.Filesystem.applicationDataDirectory + data[i].userImg,
 					zIndex : 5,
 					left : 7,
 					right : 7,
@@ -120,7 +120,7 @@ setContentView = function(tv, data, isReload) {
 				});
 				bgMiddle.add(img);
 			}
-			bgMiddle.add(title);
+			bgMiddle.add(content);
 			bgMiddle.add(pubDate);
 			contentView.add(bgTop);
 			contentView.add(bgMiddle);
@@ -128,7 +128,7 @@ setContentView = function(tv, data, isReload) {
 
 		} else {// 미션
 			row.editable = false;
-			contentView.add(title);
+			contentView.add(content);
 			dateView.add(pubDate);
 		}
 

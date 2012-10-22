@@ -38,7 +38,7 @@ save.addEventListener("click", function(e) {
 		Ti.App.fireEvent("ADD_GARDEN_HISTORY", {
 			gardenId : win.gardenId,
 			note : taNote.value,
-			content : win.filePath
+			userImg : win.filePath
 		});
 
 		var imageDir = Ti.Filesystem.getFile(Ti.Filesystem.applicationDataDirectory, 'GardenDetail');
